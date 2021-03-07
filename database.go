@@ -21,9 +21,9 @@ func DatabaseInitSchema(database *pg.DB) {
 
 	modelSchema := []interface{}{
 		(*models.User)(nil),
-		(*models.Tokens)(nil),
+		(*models.Token)(nil),
 		(*models.Notification)(nil),
-		(*models.Favourites)(nil),
+		(*models.Favourite)(nil),
 	}
 
 	for _, model := range modelSchema {
