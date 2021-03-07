@@ -33,9 +33,12 @@ jobs:
 
     - name: Build
       run: go build -v .
+      env:
+        GO111MODULE: on
 
     - name: Test
       run: go test -v .
       env:
+        GO111MODULE: on
         PHO_PG_HOST: postgres
         PHO_PG_PORT: 5432
