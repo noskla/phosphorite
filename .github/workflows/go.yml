@@ -10,6 +10,19 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+
     steps:
     - uses: actions/checkout@v2
 
@@ -23,3 +36,6 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+      env:
+        PHO_PG_HOST: postgres
+        PHO_PG_PORT: 5432
