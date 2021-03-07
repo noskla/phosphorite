@@ -29,6 +29,6 @@ type Favourites struct {
 
 // API tokens
 type Tokens struct {
-	Token string `json:"token"` // auto-generated random unique string
+	Token string `json:"token" pg:",pk"` // auto-generated random unique string
 	Owner *User  `json:"owner" pg:"rel:belongs-to"`
 }
