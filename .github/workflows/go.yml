@@ -32,10 +32,10 @@ jobs:
         go-version: 1.15
 
     - name: Build
-      run: go build -v ./...
+      run: go build -v .
 
     - name: Test
-      run: go test -v ./...
+      run: go test -v .
       env:
         PHO_PG_HOST: postgres
         PHO_PG_PORT: 5432
