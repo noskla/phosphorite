@@ -14,7 +14,6 @@ jobs:
     services:
       postgres:
         image: postgres
-        container: ubuntu:latest
         ports:
           - 5432/tcp
         env:
@@ -43,6 +42,8 @@ jobs:
       run: go test -v .
       env:
         GO111MODULE: on
+        POSTGRES_HOST: postgres
+        POSTGRES_PORT: ${{ job.services.postgres.ports['5432'] }}
         PHO_PG_HOST: postgres
         PHO_PG_PORT: ${{ job.services.postgres.ports['5432'] }}
 
