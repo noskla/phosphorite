@@ -14,6 +14,8 @@ jobs:
     services:
       postgres:
         image: postgres
+        ports:
+          - 5432/tcp
         env:
           POSTGRES_PASSWORD: password
         options: >-
@@ -41,7 +43,7 @@ jobs:
       env:
         GO111MODULE: on
         PHO_PG_HOST: postgres
-        PHO_PG_PORT: 5432
+        PHO_PG_PORT: ${{ job.services.postgres.ports['5432'] }}
 
     - name: Deploy
       uses: easingthemes/ssh-deploy@v2.1.5
