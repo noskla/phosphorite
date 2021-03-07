@@ -2,12 +2,17 @@ package main
 
 import (
 	"log"
-	"os"
 )
 
 func main() {
 	r := CreateHTTPEngine()
+	database := DatabaseConnect()
+	defer func() {
+		if err := database.Close(); err != nil {
+			log.Fatalln("Error closing database: ", err)
+		}
+	}()
+	DatabaseInitSchema(database)
 
-	port := os.Getenv("PHO_PORT")
-	log.Fatalln(r.Run(":" + port))
+	log.Fatalln(r.Run(":" + GetEnvVariable("PHO_PORT", "8321")))
 }
