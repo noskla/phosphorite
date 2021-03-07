@@ -14,6 +14,7 @@ jobs:
     services:
       postgres:
         image: postgres
+        container: ubuntu:latest
         ports:
           - 5432/tcp
         env:
