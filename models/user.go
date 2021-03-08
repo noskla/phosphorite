@@ -22,12 +22,12 @@ type Notification struct {
 	ID      uuid.NullUUID `json:"id" sql:",pk,type:uuid default uuid_generate_v4()"`
 	User    *User         `json:"user" pg:"rel:has-one,notnull"` // To which user this notification belongs
 	WasRead bool          `json:"was_read" sql:"default:false"`  // If user already read this notification
-	Message string        `json:"message" pg:"notnull"`          // Message contents
+	Message string        `json:"message" pg:",notnull"`         // Message contents
 }
 
 type Favourite struct {
-	User   *User  `json:"user" pg:"rel:has-one"`
-	SongID string `json:"song"`
+	UserID *User  `json:"user_id" pg:"rel:has-one"`
+	SongID string `json:"song_id"`
 }
 
 // API tokens
