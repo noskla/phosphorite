@@ -25,7 +25,6 @@ jobs:
           --health-retries 5
           --name postgres
 
-
     steps:
     - uses: actions/checkout@v2
 
@@ -38,6 +37,14 @@ jobs:
       run: go build -v .
       env:
         GO111MODULE: on
+
+    - name: Notify Discord
+      uses: Sniddl/discord-commits@v1.3
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        message: "New commit in **{{ github.context.payload.repository.owner.name }}/{{ github.context.payload.repository.name}}**.\nDiff: {{ github.context.payload.compare }}"
+        embed: '{ "title": "{{ commit.title }}", "description": "{{ commit.description }}", "url": "{{ commit.url }}", "author": { "name": "{{ commit.author.name }} ({{ commit.author.username }})", "icon_url": "https://avatars.io/gravatar/{{ commit.author.email }}"} }'
+        last-commit-only: true
 
     - name: Test
       run: go test -v .
@@ -57,11 +64,3 @@ jobs:
         REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: ${{ secrets.REMOTE_TARGET }}
-        
-    - name: Notify Discord
-      uses: Sniddl/discord-commits@v1.3
-      with:
-        webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        message: "New commit in **{{ github.context.payload.repository.owner.name }}/{{ github.context.payload.repository.name}}**.\nDiff: {{ github.context.payload.compare }}"
-        embed: '{ "title": "{{ commit.title }}", "description": "{{ commit.description }}", "url": "{{ commit.url }}", "author": { "name": "{{ commit.author.name }} ({{ commit.author.username }})", "icon_url": "https://avatars.io/gravatar/{{ commit.author.email }}"} }'
-        last-commit-only: true
