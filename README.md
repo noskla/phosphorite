@@ -1,4 +1,4 @@
-# ![PHO](https://raw.githubusercontent.com/noskla/phosphorite/main/images/phosphorite.png | width=128) Phosphorite
+# <img src="https://raw.githubusercontent.com/noskla/phosphorite/main/images/phosphorite.png" height="96"> Phosphorite
 ## REST API for [Las Pegasus Radio](https://laspegas.us) based on microservices.
 
 ### Basic compilation
