@@ -19,7 +19,7 @@ type User struct {
 } // booleans of allowed functions
 
 type Notification struct {
-	ID      uuid.UUID `json:"id" sql:",pk,type:uuid default uuid_generate_v4()"`
+	ID      uuid.UUID `json:"id" sql:",pk,type:uuid"`
 	User    *User     `json:"user" pg:"rel:has-one,notnull"` // To which user this notification belongs
 	WasRead bool      `json:"was_read" sql:"default:false"`  // If user already read this notification
 	Message string    `json:"message" pg:",notnull"`         // Message contents
