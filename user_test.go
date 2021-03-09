@@ -26,7 +26,7 @@ func TestUserFailNoPassword(t *testing.T) {
 }
 
 func TestUserIPv6(t *testing.T) {
-	err, answer := CreateUser(database, "TestUser2", "", "en", "2001:0db8:85a3:0000:0000:8a2e:0370:7334")
+	err, answer := CreateUser(database, "TestUser3", "12345678", "en", "2001:0db8:85a3:0000:0000:8a2e:0370:7334")
 	assert.NoError(t, err)
 	assert.Equal(t, 1, answer)
 }
