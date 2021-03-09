@@ -10,12 +10,22 @@ import (
 
 /*
 	0 - Hash error           1 - OK
-	2 - Username length err  3 - UUID error
+	2 - Username too long    3 - UUID error
+    4 - Username too short   5 - Password too long
+    6 - Password too short
 */
 func CreateUser(db *pg.DB, name string, password string, language string, IP string) (error, int) {
 
 	if len(name) > 16 {
 		return nil, 2
+	} else if len(name) < 4 {
+		return nil, 4
+	}
+
+	if len(password) > 64 {
+		return nil, 5
+	} else if len(name) < 6 {
+		return nil, 6
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
