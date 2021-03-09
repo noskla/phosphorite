@@ -54,13 +54,3 @@ jobs:
         POSTGRES_PORT: 5432
         PHO_PG_HOST: postgres
         PHO_PG_PORT: 5432
-
-    - name: Deploy
-      uses: easingthemes/ssh-deploy@v2.1.5
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-        SOURCE: "phosphorite"
-        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-        REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-        REMOTE_USER: ${{ secrets.REMOTE_USER }}
-        TARGET: ${{ secrets.REMOTE_TARGET }}
