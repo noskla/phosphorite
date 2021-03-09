@@ -47,3 +47,11 @@ func TestUserIPv6(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, answer)
 }
+
+func TestUserPasswordValidation(t *testing.T) {
+	err, answer, userUUID := ValidateUserPassword(database, "TestUser", "12345678", true)
+	assert.NoError(t, err)
+	if assert.Equal(t, 1, answer) {
+		assert.Equal(t, userUUID, baseUserUUID)
+	}
+}

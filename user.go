@@ -6,6 +6,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"phosphorite/models"
+	"time"
+)
+
+const (
+	UserNameMaxLen     = 16
+	UserNameMinLen     = 4
+	UserPasswordMaxLen = 64
+	UserPasswordMinLen = 6
 )
 
 /*
@@ -30,22 +38,64 @@ func GetUserByID(db *pg.DB, ID string) (error, int, *models.User) {
 }
 
 /*
+	0 - Password is not correct		1 - OK
+	2 - Incorrect username length	3 - Query error
+*/
+func ValidateUserPassword(db *pg.DB, name string, password string, saveDate bool) (error, int, uuid.UUID) {
+
+	if nameLength := len(name); nameLength > UserNameMaxLen || nameLength < UserNameMinLen {
+		return nil, 2, uuid.UUID{}
+	}
+	if passLength := len(password); passLength > UserPasswordMaxLen || passLength < UserPasswordMinLen {
+		return nil, 0, uuid.UUID{}
+	}
+
+	var userUUID uuid.UUID
+	var hashedPassword string
+
+	err := db.Model((*models.User)(nil)).
+		Column("id", "password").
+		Where("name = ?", name).
+		Select(&userUUID, &hashedPassword)
+	if err != nil {
+		log.Println("Query error during password validation: ", err)
+		return nil, 3, uuid.UUID{}
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		return nil, 0, uuid.UUID{}
+	}
+
+	if saveDate {
+		if _, err := db.Model(&models.User{LastLoginDate: time.Now()}).
+			Set("last_login_date = ?last_login_date").Where("id = ?", userUUID).Update(); err != nil {
+			log.Println("Query error during last login date update on validation: ", err)
+			return nil, 3, userUUID
+		}
+	}
+
+	return nil, 1, userUUID
+
+}
+
+/*
 	0 - Hash error           1 - OK
 	2 - Username too long    3 - UUID error
     4 - Username too short   5 - Password too long
-    6 - Password too short
+    6 - Password too short	 7 - Username in use
 */
 func CreateUser(db *pg.DB, name string, password string, language string, IP string) (error, int, uuid.UUID) {
 
-	if len(name) > 16 {
+	if len(name) > UserNameMaxLen {
 		return nil, 2, uuid.UUID{}
-	} else if len(name) < 4 {
+	} else if len(name) < UserNameMinLen {
 		return nil, 4, uuid.UUID{}
 	}
 
-	if len(password) > 64 {
+	if len(password) > UserPasswordMaxLen {
 		return nil, 5, uuid.UUID{}
-	} else if len(password) < 6 {
+	} else if len(password) < UserPasswordMinLen {
 		return nil, 6, uuid.UUID{}
 	}
 
@@ -71,6 +121,10 @@ func CreateUser(db *pg.DB, name string, password string, language string, IP str
 	}).Insert()
 
 	if err != nil {
+		pgErr, ok := err.(pg.Error)
+		if ok && pgErr.IntegrityViolation() {
+			return nil, 7, uuid.UUID{}
+		}
 		log.Println("Error during user creation:", err)
 		return err, 0, uuid.UUID{}
 	}
