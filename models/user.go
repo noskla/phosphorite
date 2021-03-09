@@ -26,7 +26,7 @@ type Notification struct {
 }
 
 type Favourite struct {
-	UserID *User  `json:"user_id" pg:"rel:has-one"`
+	UserID *User  `json:"user_id" pg:"rel:belongs-to"`
 	SongID string `json:"song_id"`
 }
 
