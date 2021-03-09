@@ -1,6 +1,6 @@
 package models
 
-import uuid "github.com/satori/go.uuid"
+import uuid "github.com/google/uuid"
 
 type User struct {
 	ID            uuid.UUID       `json:"id" sql:",pk,notnull,type:uuid default uuid_generate_v4()"`
