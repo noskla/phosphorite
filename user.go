@@ -24,7 +24,7 @@ func CreateUser(db *pg.DB, name string, password string, language string, IP str
 
 	if len(password) > 64 {
 		return nil, 5
-	} else if len(name) < 6 {
+	} else if len(password) < 6 {
 		return nil, 6
 	}
 
