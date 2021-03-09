@@ -1,6 +1,9 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type User struct {
 	ID            uuid.UUID       `json:"id" pg:",type:uuid"`
@@ -8,9 +11,9 @@ type User struct {
 	Password      string          `json:"password"`
 	Avatar        []byte          `json:"avatar"`
 	RegisterIP    string          `json:"register_ip"`
-	RegisterDate  int64           `json:"register_date" pg:"default:now()"`
+	RegisterDate  time.Time       `json:"register_date" pg:"default:now()"`
 	LastLoginIP   string          `json:"last_login_ip"`
-	LastLoginDate int64           `json:"last_login_date" pg:"default:now()"`
+	LastLoginDate time.Time       `json:"last_login_date" pg:"default:now()"`
 	LanguageCode  string          `json:"language_code" pg:"default:en"` // eg. "en"
 	RankLevelID   string          `json:"rank_level_id"`                 // UUID of RankLevel struct containing
 	Tokens        []*Token        `json:"tokens" pg:"rel:has-many,join_fk:token"`
