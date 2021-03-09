@@ -26,8 +26,9 @@ type Notification struct {
 }
 
 type Favourite struct {
-	UserID *User  `json:"user_id" pg:"rel:belongs-to"`
-	SongID string `json:"song_id"`
+	UserID uuid.UUID `json:"user_id"`
+	SongID string    `json:"song_id"`
+	User   *User     `json:"user" pg:"rel:belongs-to"`
 }
 
 // API tokens
