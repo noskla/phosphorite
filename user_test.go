@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/go-pg/pg/v10"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -24,12 +25,15 @@ func TestUserCreation(t *testing.T) {
 }
 
 func TestUserSelection(t *testing.T) {
-	err, answer, user := GetUserByID(database, baseUserUUID.String())
+	userUUID := baseUserUUID.String()
+	fmt.Println("User ID: ", userUUID)
+	err, answer, user := GetUserByID(database, userUUID)
 	assert.NoError(t, err)
-	assert.Equal(t, answer, 1)
-	assert.Equal(t, user.ID, baseUserUUID)
-	assert.Equal(t, user.Name, "TestUser")
-	assert.NotEqual(t, user.Password, "12345678")
+	if assert.Equal(t, 1, answer) {
+		assert.Equal(t, userUUID, user.ID.String())
+		assert.Equal(t, "TestUser", user.Name)
+		assert.NotEqual(t, "12345678", user.Password)
+	}
 }
 
 func TestUserFailNoPassword(t *testing.T) {
