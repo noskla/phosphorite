@@ -3,7 +3,7 @@ package models
 import uuid "github.com/satori/go.uuid"
 
 type User struct {
-	ID            uuid.NullUUID   `json:"id" sql:",pk,type:uuid default uuid_generate_v4()"`
+	ID            uuid.NullUUID   `json:"id" sql:",pk,type:uuid,default:uuid_generate_v4()"`
 	Name          string          `json:"name" pg:",notnull"`
 	Password      string          `json:"password"`
 	Avatar        []byte          `json:"avatar"`
