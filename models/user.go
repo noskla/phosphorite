@@ -3,7 +3,7 @@ package models
 import uuid "github.com/google/uuid"
 
 type User struct {
-	ID            uuid.UUID       `json:"id" sql:",pk,notnull,type:uuid default uuid_generate_v4()"`
+	ID            uuid.UUID       `json:"id" sql:",pk,type:uuid default uuid_generate_v4()"`
 	Name          string          `json:"name" pg:",notnull"`
 	Password      string          `json:"password"`
 	Avatar        []byte          `json:"avatar"`
@@ -19,7 +19,7 @@ type User struct {
 } // booleans of allowed functions
 
 type Notification struct {
-	ID      uuid.UUID `json:"id" sql:",pk,notnull,type:uuid default uuid_generate_v4()"`
+	ID      uuid.UUID `json:"id" sql:",pk,type:uuid default uuid_generate_v4()"`
 	User    *User     `json:"user" pg:"rel:has-one,notnull"` // To which user this notification belongs
 	WasRead bool      `json:"was_read" sql:"default:false"`  // If user already read this notification
 	Message string    `json:"message" pg:",notnull"`         // Message contents
@@ -27,7 +27,7 @@ type Notification struct {
 
 type Favourite struct {
 	ID     int       `json:"id"`
-	UserID uuid.UUID `json:"user_id"`
+	UserID uuid.UUID `json:"user_id" sql:",type:uuid"`
 	SongID string    `json:"song_id"`
 	User   *User     `json:"user" pg:"rel:belongs-to"`
 }
