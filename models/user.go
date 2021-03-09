@@ -3,7 +3,7 @@ package models
 import uuid "github.com/google/uuid"
 
 type User struct {
-	ID            uuid.UUID       `json:"id" sql:",pk,type:uuid default uuid_generate_v4()"`
+	ID            uuid.UUID       `json:"id" sql:",pk,type:uuid"`
 	Name          string          `json:"name" pg:",notnull"`
 	Password      string          `json:"password"`
 	Avatar        []byte          `json:"avatar"`
