@@ -15,11 +15,12 @@ import (
 func GetUserByID(db *pg.DB, ID string) (error, int, *models.User) {
 
 	user := new(models.User)
-	if _, err := uuid.Parse(ID); err != nil {
+	userUUID, err := uuid.Parse(ID)
+	if err != nil {
 		return err, 2, user
 	}
 
-	err := db.Model(user).Where("id = ?", ID).Select()
+	err = db.Model(user).Where("id = ?", userUUID).Select()
 	if err != nil {
 		log.Println("Error requesting user: ", err)
 		return err, 3, user
