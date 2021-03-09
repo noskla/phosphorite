@@ -3,7 +3,7 @@ package models
 import uuid "github.com/satori/go.uuid"
 
 type User struct {
-	ID            uuid.NullUUID   `json:"id" sql:",pk,type:uuid,default:uuid_generate_v4()"`
+	ID            uuid.NullUUID   `json:"id" sql:",pk,type:uuid default uuid_generate_v4()"`
 	Name          string          `json:"name" pg:",notnull"`
 	Password      string          `json:"password"`
 	Avatar        []byte          `json:"avatar"`
@@ -26,10 +26,10 @@ type Notification struct {
 }
 
 type Favourite struct {
-	ID     int       `json:"id"`
-	UserID uuid.UUID `json:"user_id"`
-	SongID string    `json:"song_id"`
-	User   *User     `json:"user" pg:"rel:belongs-to"`
+	ID     int           `json:"id"`
+	UserID uuid.NullUUID `json:"user_id"`
+	SongID string        `json:"song_id"`
+	User   *User         `json:"user" pg:"rel:belongs-to"`
 }
 
 // API tokens
