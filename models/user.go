@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	ID            uuid.UUID       `json:"id" pg:",type:uuid"`
-	Name          string          `json:"name" pg:",notnull"`
+	Name          string          `json:"name" pg:",unique,notnull"`
 	Password      string          `json:"password"`
 	Avatar        []byte          `json:"avatar"`
 	RegisterIP    string          `json:"register_ip"`
@@ -37,6 +37,6 @@ type Favourite struct {
 
 // API tokens
 type Token struct {
-	Token string `json:"token" pg:",pk"` // auto-generated random unique string
+	Token string `json:"token" pg:",unique,pk"` // auto-generated random unique string
 	Owner *User  `json:"owner" pg:"rel:belongs-to,join_fk:tokens"`
 }
