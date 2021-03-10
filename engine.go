@@ -1,6 +1,8 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func CreateHTTPEngine() *gin.Engine {
 	r := gin.New()
@@ -14,9 +16,9 @@ func CreateHTTPEngine() *gin.Engine {
 
 	// Route groups
 	// -- User
-	r.Group("/user")
+	users := r.Group("/user")
 	{
-
+		users.GET("/:id", RouteGetUserByID)
 	}
 
 	// -- Album

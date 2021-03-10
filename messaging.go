@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/go-pg/pg/v10"
 	"github.com/streadway/amqp"
 	"log"
 	"strconv"
@@ -11,7 +10,7 @@ import (
 var RabbitMQChannel *amqp.Channel
 var RabbitMQRPCQueue amqp.Queue
 
-func InitMessagingService(db *pg.DB) *amqp.Connection {
+func InitMessagingService() *amqp.Connection {
 	var username = GetEnvVariable("PHO_MQ_USER", "guest")
 	var password = GetEnvVariable("PHO_MQ_PASSWORD", "guest")
 	var address = GetEnvVariable("PHO_MQ_ADDRESS", "127.0.0.1")
@@ -51,13 +50,13 @@ func InitMessagingService(db *pg.DB) *amqp.Connection {
 		return conn
 	}
 
-	go MessagingServiceLoop(messages, db)
+	go MessagingServiceLoop(messages)
 	log.Println("Messaging enabled")
 	return conn
 
 }
 
-func MessagingServiceLoop(messages <-chan amqp.Delivery, db *pg.DB) {
+func MessagingServiceLoop(messages <-chan amqp.Delivery) {
 	for msg := range messages {
 
 		var rpccall map[string]interface{}
@@ -81,7 +80,7 @@ func MessagingServiceLoop(messages <-chan amqp.Delivery, db *pg.DB) {
 			language := rpccall["language"].(string)
 			userIP := rpccall["ip"].(string)
 
-			err, code, userUUID := CreateUser(db, username, password, language, userIP)
+			err, code, userUUID := CreateUser(username, password, language, userIP)
 			response["code"] = strconv.Itoa(code)
 			if code != 1 {
 				response["error"] = err.Error()
@@ -92,7 +91,7 @@ func MessagingServiceLoop(messages <-chan amqp.Delivery, db *pg.DB) {
 			username := rpccall["username"].(string)
 			password := rpccall["password"].(string)
 			saveDate := rpccall["save_date"].(string) == "yes"
-			err, code, userUUID := ValidateUserPassword(db, username, password, saveDate)
+			err, code, userUUID := ValidateUserPassword(username, password, saveDate)
 			if code != 1 {
 				response["error"] = err.Error()
 			} else {

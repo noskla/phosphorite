@@ -20,14 +20,14 @@ const (
 	1 - OK           2 - Requested non-UUID value
 	3 - Query error
 */
-func GetUserByID(db *pg.DB, ID string) (error, int, *models.User) {
+func GetUserByID(ID string) (error, int, *models.User) {
 
 	user := new(models.User)
 	if _, err := uuid.Parse(ID); err != nil {
 		return err, 2, user
 	}
 
-	err := db.Model(user).Where("id = ?", ID).Select()
+	err := Database.Model(user).Where("id = ?", ID).ExcludeColumn("password", "avatar").Select()
 	if err != nil {
 		log.Println("Error requesting user: ", err)
 		return err, 3, user
@@ -41,7 +41,7 @@ func GetUserByID(db *pg.DB, ID string) (error, int, *models.User) {
 	0 - Password is not correct		1 - OK
 	2 - Incorrect username length	3 - Query error
 */
-func ValidateUserPassword(db *pg.DB, name string, password string, saveDate bool) (error, int, uuid.UUID) {
+func ValidateUserPassword(name string, password string, saveDate bool) (error, int, uuid.UUID) {
 
 	if nameLength := len(name); nameLength > UserNameMaxLen || nameLength < UserNameMinLen {
 		return nil, 2, uuid.UUID{}
@@ -53,7 +53,7 @@ func ValidateUserPassword(db *pg.DB, name string, password string, saveDate bool
 	var userUUID uuid.UUID
 	var hashedPassword string
 
-	err := db.Model((*models.User)(nil)).
+	err := Database.Model((*models.User)(nil)).
 		Column("id", "password").
 		Where("name = ?", name).
 		Select(&userUUID, &hashedPassword)
@@ -68,7 +68,7 @@ func ValidateUserPassword(db *pg.DB, name string, password string, saveDate bool
 	}
 
 	if saveDate {
-		if _, err := db.Model(&models.User{LastLoginDate: time.Now()}).
+		if _, err := Database.Model(&models.User{LastLoginDate: time.Now()}).
 			Set("last_login_date = ?last_login_date").Where("id = ?", userUUID).Update(); err != nil {
 			log.Println("Query error during last login date update on validation: ", err)
 			return nil, 3, userUUID
@@ -85,7 +85,7 @@ func ValidateUserPassword(db *pg.DB, name string, password string, saveDate bool
     4 - Username too short   5 - Password too long
     6 - Password too short	 7 - Username in use
 */
-func CreateUser(db *pg.DB, name string, password string, language string, IP string) (error, int, uuid.UUID) {
+func CreateUser(name string, password string, language string, IP string) (error, int, uuid.UUID) {
 
 	if len(name) > UserNameMaxLen {
 		return nil, 2, uuid.UUID{}
@@ -111,7 +111,7 @@ func CreateUser(db *pg.DB, name string, password string, language string, IP str
 		return err, 3, uuid.UUID{}
 	}
 
-	_, err = db.Model(&models.User{
+	_, err = Database.Model(&models.User{
 		ID:           userUUID,
 		Name:         name,
 		Password:     string(hashedPassword),
