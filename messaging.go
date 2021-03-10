@@ -70,18 +70,29 @@ func MessagingServiceLoop(messages <-chan amqp.Delivery, db *pg.DB) {
 		if !exist {
 			continue
 		}
-		username := rpccall["username"].(string)
-		password := rpccall["password"].(string)
-		language := rpccall["language"].(string)
-		userIP := rpccall["ip"].(string)
 
 		log.Println("RPC => " + functionName)
 		var response = make(map[string]string)
 
 		switch functionName {
 		case "create_user":
+			username := rpccall["username"].(string)
+			password := rpccall["password"].(string)
+			language := rpccall["language"].(string)
+			userIP := rpccall["ip"].(string)
+
 			err, code, userUUID := CreateUser(db, username, password, language, userIP)
 			response["code"] = strconv.Itoa(code)
+			if code != 1 {
+				response["error"] = err.Error()
+			} else {
+				response["user_id"] = userUUID.String()
+			}
+		case "validate_user":
+			username := rpccall["username"].(string)
+			password := rpccall["password"].(string)
+			saveDate := rpccall["save_date"].(string) == "yes"
+			err, code, userUUID := ValidateUserPassword(db, username, password, saveDate)
 			if code != 1 {
 				response["error"] = err.Error()
 			} else {
