@@ -13,6 +13,7 @@ func main() {
 		}
 	}()
 	DatabaseInitSchema(database)
+	InitMessagingService(database)
 
 	log.Fatalln(r.Run(":" + GetEnvVariable("PHO_PORT", "8321")))
 }
