@@ -83,3 +83,13 @@ func TestUserGetByIDRoute(t *testing.T) {
 	userInfo := response["user"].(map[string]interface{})
 	assert.Equal(t, baseUserUUID.String(), userInfo["id"].(string))
 }
+
+func TestUserListing(t *testing.T) {
+	err, answer, userList, userCount := GetUserList(1, 10, "name")
+	assert.NoError(t, err)
+	if !assert.Equal(t, 1, answer) {
+		return
+	}
+	assert.NotEqual(t, 0, userCount)
+	assert.Equal(t, "TestUser", userList[0].Name)
+}

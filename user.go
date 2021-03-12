@@ -131,3 +131,28 @@ func CreateUser(name string, password string, language string, IP string) (error
 	return nil, 1, userUUID
 
 }
+
+/*
+	0 - Query error
+*/
+func GetUserList(page int, pageSize int, sortBy string) (error, int, []models.User, int) {
+
+	if !SliceContains([]string{"name", "register_date", "last_login_date", "rank_level_id"}, sortBy) {
+		sortBy = "name"
+	}
+	if page < 1 || page > MaxInt32 {
+		page = 1
+	}
+
+	var users []models.User
+	offset := (pageSize * page) - pageSize
+	count, err := Database.Model(&users).Order(sortBy).Limit(pageSize).Offset(offset).
+		ExcludeColumn("password", "avatar").SelectAndCount()
+	if err != nil {
+		log.Println("Error during querying user list: ", err)
+		return err, 0, []models.User{}, 0
+	}
+
+	return nil, 1, users, count
+
+}
