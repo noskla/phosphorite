@@ -10,6 +10,7 @@ type User struct {
 	Name          string          `json:"name" pg:",unique,notnull"`
 	Password      string          `json:"password"`
 	Avatar        []byte          `json:"avatar"`
+	DiscordTag    string          `json:"discord_tag"`
 	RegisterIP    string          `json:"register_ip"`
 	RegisterDate  time.Time       `json:"register_date" pg:",default:now()"`
 	LastLoginIP   string          `json:"last_login_ip"`
