@@ -133,7 +133,7 @@ func CreateUser(name string, password string, language string, IP string) (error
 }
 
 /*
-	0 - Query error
+	0 - Query error			1 - Ok
 */
 func GetUserList(page int, pageSize int, sortBy string) (error, int, []models.User, int) {
 

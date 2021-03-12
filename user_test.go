@@ -92,4 +92,7 @@ func TestUserListing(t *testing.T) {
 	}
 	assert.NotEqual(t, 0, userCount)
 	assert.Equal(t, "TestUser", userList[0].Name)
+	err, answer, userList, userCount = GetUserList(2, 10, "name")
+	assert.NoError(t, err)
+	assert.Empty(t, userList)
 }
