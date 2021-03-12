@@ -20,6 +20,7 @@ func CreateHTTPEngine() *gin.Engine {
 	{
 		users.GET("/:id", RouteGetUserByID)
 	}
+	r.GET("/users", RouteGetUserList)
 
 	// -- Album
 	r.Group("/album")
