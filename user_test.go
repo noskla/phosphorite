@@ -7,10 +7,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"phosphorite/models"
 	"testing"
 )
 
@@ -64,26 +62,24 @@ func TestUserPasswordValidation(t *testing.T) {
 
 func TestUserGetByIDRoute(t *testing.T) {
 	httpEngine = CreateHTTPEngine()
-	w := httptest.NewRecorder()
+	res := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/user/"+baseUserUUID.String(), nil)
 	if !assert.NoError(t, err) {
 		return
 	}
-	httpEngine.ServeHTTP(w, req)
+	httpEngine.ServeHTTP(res, req)
 
 	response := make(map[string]interface{})
-	log.Println(req.Body)
-	b, err := ioutil.ReadAll(req.Body)
+	bodyJSON, err := ioutil.ReadAll(res.Body)
 	if !assert.NoError(t, err) {
 		return
 	}
-	defer req.Body.Close()
-	assert.NoError(t, json.Unmarshal(b, &response))
 
-	assert.Equal(t, 200, req)
+	assert.NoError(t, json.Unmarshal(bodyJSON, &response))
+
+	assert.Equal(t, 200, res.Code)
 	assert.Equal(t, true, response["ok"].(bool))
 
-	userInfo := response["user"].(*models.User)
-	assert.Equal(t, userInfo.ID.String(), baseUserUUID.String())
-	log.Println(userInfo.Name)
+	userInfo := response["user"].(map[string]interface{})
+	assert.Equal(t, baseUserUUID.String(), userInfo["id"].(string))
 }
