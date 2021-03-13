@@ -71,7 +71,7 @@ func MessagingServiceLoop(messages <-chan amqp.Delivery) {
 		}
 
 		log.Println("RPC => " + functionName)
-		var response = make(map[string]string)
+		var response = make(map[string]interface{})
 
 		switch functionName {
 		case "create_user":
@@ -85,7 +85,7 @@ func MessagingServiceLoop(messages <-chan amqp.Delivery) {
 			if code != 1 {
 				response["error"] = err.Error()
 			} else {
-				response["user_id"] = userUUID.String()
+				response["user_id"] = userUUID
 			}
 		case "validate_user":
 			username := rpccall["username"].(string)
@@ -95,14 +95,24 @@ func MessagingServiceLoop(messages <-chan amqp.Delivery) {
 			if code != 1 {
 				response["error"] = err.Error()
 			} else {
-				response["user_id"] = userUUID.String()
+				response["user_id"] = userUUID
 			}
-
+		case "list_users":
+			page := int(rpccall["page"].(float64))
+			pageSize := int(rpccall["page_size"].(float64))
+			sortBy := rpccall["sort_by"].(string)
+			err, code, users, count := GetUserList(page, pageSize, sortBy)
+			if code != 1 {
+				response["error"] = err.Error()
+			} else {
+				response["users"] = users
+				response["user_count"] = count
+			}
 		}
 
 		res, _ := json.Marshal(response)
 		if err := RabbitMQChannel.Publish("", msg.ReplyTo, false, false, amqp.Publishing{
-			ContentType: "application/json", CorrelationId: msg.CorrelationId, Body: []byte(res)}); err != nil {
+			ContentType: "application/json", CorrelationId: msg.CorrelationId, Body: res}); err != nil {
 			log.Println("Error publishing message: ", err)
 			continue
 		}
