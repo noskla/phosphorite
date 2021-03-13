@@ -96,3 +96,9 @@ func TestUserListing(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Empty(t, userList)
 }
+
+func TestUserDelete(t *testing.T) {
+	err, answer := DeleteUser(baseUserUUID.String())
+	assert.NoError(t, err)
+	assert.Equal(t, 1, answer)
+}

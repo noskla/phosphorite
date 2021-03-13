@@ -156,3 +156,26 @@ func GetUserList(page int, pageSize int, sortBy string) (error, int, []models.Us
 	return nil, 1, users, count
 
 }
+
+/*
+	0 - Requested non-UUID value	1 - Ok
+	2 - Query error					3 - User does not exist
+*/
+func DeleteUser(ID string) (error, int) {
+
+	user := new(models.User)
+	if _, err := uuid.Parse(ID); err != nil {
+		return err, 0
+	}
+
+	res, err := Database.Model(user).Where("id = ?", ID).Delete()
+	if err != nil {
+		log.Println("Query error during user deletion: ", err)
+		return err, 2
+	} else if res.RowsAffected() == 0 {
+		return nil, 3
+	}
+
+	return nil, 1
+
+}
