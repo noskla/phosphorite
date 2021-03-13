@@ -19,6 +19,7 @@ func CreateHTTPEngine() *gin.Engine {
 	users := r.Group("/user")
 	{
 		users.GET("/:id", RouteGetUserByID)
+		users.DELETE("/:id", RouteDeleteUser)
 	}
 	r.GET("/users", RouteGetUserList)
 

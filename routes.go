@@ -71,3 +71,23 @@ func RouteGetUserList(c *gin.Context) {
 	})
 
 }
+
+func RouteDeleteUser(c *gin.Context) {
+	userID := c.Param("id")
+	_, answer := DeleteUser(userID)
+	var statusCode int
+	switch answer {
+	case 0:
+		statusCode = http.StatusBadRequest
+	case 1:
+		statusCode = http.StatusOK
+	case 2:
+		statusCode = http.StatusInternalServerError
+	case 3:
+		statusCode = http.StatusNotFound
+	}
+	c.JSON(statusCode, gin.H{
+		"ok":          answer == 1,
+		"status_code": answer,
+	})
+}
