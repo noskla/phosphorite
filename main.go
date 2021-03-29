@@ -3,11 +3,14 @@ package main
 import (
 	"github.com/go-pg/pg/v10"
 	"log"
+	"math/rand"
+	"time"
 )
 
 var Database *pg.DB
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	Database = DatabaseConnect()
 	defer func() {
 		if err := Database.Close(); err != nil {
