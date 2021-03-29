@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -101,4 +102,15 @@ func TestUserDelete(t *testing.T) {
 	err, answer := DeleteUser(baseUserUUID.String())
 	assert.NoError(t, err)
 	assert.Equal(t, 1, answer)
+}
+
+var generatedToken string
+
+func TestTokenGeneration(t *testing.T) {
+	err, answer, token := GenerateAndAddToken(baseUserUUID.String())
+	assert.NoError(t, err)
+	assert.Equal(t, 1, answer)
+	assert.NotEmpty(t, token)
+	generatedToken = token
+	log.Println("Token:", generatedToken)
 }
